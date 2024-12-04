@@ -24,11 +24,21 @@ MonoBehaviour:
     m_InitialScene: {fileID: 102900000, guid: 99c9720ab356a0642a771bea13969a05, type: 3}
   m_EditorInstances: []
   m_LocalInstances:
-  - Name: Instance
-    <CorrespondingNodeId>k__BackingField: Instance - Run
+  - Name: Player 1
+    <CorrespondingNodeId>k__BackingField: Player 1 - Run
     m_Nodes:
-    - Instance - Build
-    - Instance - Run
+    - Player 1 - Build
+    - Player 1 - Run
+    m_BuildProfile: {fileID: 11400000, guid: 0d12c1f01a8278947a65206069416659, type: 2}
+    advancedConfiguration:
+      m_StreamLogsToMainEditor: 1
+      m_LogsColor: {r: 0.3643, g: 0.581, b: 0.8679, a: 1}
+      m_Arguments: -screen-fullscreen 0 -screen-width 1024 -screen-height 720
+  - Name: Player 2
+    <CorrespondingNodeId>k__BackingField: Player 2 - Run
+    m_Nodes:
+    - Player 2 - Build
+    - Player 2 - Run
     m_BuildProfile: {fileID: 11400000, guid: 0d12c1f01a8278947a65206069416659, type: 2}
     advancedConfiguration:
       m_StreamLogsToMainEditor: 1
