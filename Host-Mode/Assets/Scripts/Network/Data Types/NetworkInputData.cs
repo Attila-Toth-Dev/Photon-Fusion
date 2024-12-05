@@ -5,6 +5,7 @@ namespace Network.Data_Types
 {
     public struct NetworkInputData : INetworkInput
     {
-        public Vector3 Direction;
+        public Vector3 moveDirection;
+        public Vector3 lookDirection;
     }
 }

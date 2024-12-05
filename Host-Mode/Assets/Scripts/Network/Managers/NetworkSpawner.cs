@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Fusion;
-using Fusion.Addons.Physics;
 using Fusion.Sockets;
 using Network.Data_Types;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using Quaternion = UnityEngine.Quaternion;
 using Random = UnityEngine.Random;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Network.Managers
 {
@@ -19,12 +21,14 @@ namespace Network.Managers
         [Header("Controls")]
         [SerializeField] private InputActionReference moveAction;
         [SerializeField] private InputActionReference lookAction;
-    
-        [SerializeField] private Vector3 moveDirection;
         
-        private Dictionary<PlayerRef, NetworkObject> _spawnCharacters = new Dictionary<PlayerRef, NetworkObject>();
+        private Vector3 _movementInput;
+        private Vector3 _lookInput;
+        
+        private readonly Dictionary<PlayerRef, NetworkObject> _spawnCharacters = new Dictionary<PlayerRef, NetworkObject>();
         private NetworkRunner _runner;
     
+        // ReSharper disable once AsyncVoidMethod
         async void StartGame(GameMode mode)
         {
             // Create the Fusion Runner and let it know that we will be providing user input
@@ -48,20 +52,29 @@ namespace Network.Managers
             });
         }
 
+        private void Awake()
+        {
+#if UNITY_LINUX_SERVER
+            StartGame(GameMode.Server);
+#endif
+        }
+
+#if UNITY_STANDALONE || UNITY_EDITOR
         private void OnGUI()
         {
             if (_runner == null)
             {
-                if (GUI.Button(new Rect(0, 0, 200, 40), "Server"))
+                if (GUI.Button(new Rect(10, 10, 200, 40), "Server"))
                     StartGame(GameMode.Server);
                 
-                if (GUI.Button(new Rect(0, 45, 200, 40), "Host"))
+                if (GUI.Button(new Rect(10, 55, 200, 40), "Host"))
                     StartGame(GameMode.Host);
 
-                if (GUI.Button(new Rect(0, 90, 200, 40), "Join"))
+                if (GUI.Button(new Rect(10, 100, 200, 40), "Join"))
                     StartGame(GameMode.Client);
             }
         }
+#endif
     
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
         {
@@ -95,7 +108,8 @@ namespace Network.Managers
 
         private void Update()
         {
-            moveDirection = new Vector3(moveAction.action.ReadValue<Vector2>().x, 0, moveAction.action.ReadValue<Vector2>().y);
+            _movementInput = new Vector3(moveAction.action.ReadValue<Vector2>().x, 0, moveAction.action.ReadValue<Vector2>().y);
+            _lookInput = Input.mousePosition/*new Vector3(lookAction.action.ReadValue<Vector2>().x, 0, lookAction.action.ReadValue<Vector2>().y)*/;
         }
 
         public void OnEnable()
@@ -112,7 +126,8 @@ namespace Network.Managers
         {
             NetworkInputData data = new NetworkInputData();
             
-            data.Direction += moveDirection;
+            data.moveDirection += _movementInput;
+            data.lookDirection += _lookInput;
             
             input.Set(data);
         }

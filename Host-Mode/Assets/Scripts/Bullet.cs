@@ -1,7 +1,10 @@
 using Fusion;
+using UnityEngine;
 
-public class Ball : NetworkBehaviour
+public class Bullet : NetworkBehaviour
 {
+    [SerializeField] private float bulletSpeed;
+    
     // Networked flags the variable to be synced in the TickTimer
     // Networked variables must have an empty get and set
     // They are used to generate serialization code
@@ -17,6 +20,6 @@ public class Ball : NetworkBehaviour
         if(Life.Expired(Runner))
             Runner.Despawn(Object);
         else
-            transform.position += 5 * transform.forward * Runner.DeltaTime;
+            transform.position += bulletSpeed * transform.forward * Runner.DeltaTime;
     }
 }

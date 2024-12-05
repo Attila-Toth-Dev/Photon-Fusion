@@ -7,11 +7,22 @@ public class Player : NetworkBehaviour
 {
     private TMP_Text _messages;
 
+    private Vector3 _lookDir;
+    
     public override void FixedUpdateNetwork()
     {
         if (GetInput(out NetworkInputData data))
         {
-            transform.position += 5 * data.Direction * Runner.DeltaTime;
+            transform.position += 5 * data.moveDirection * Runner.DeltaTime;
+
+            if (Camera.main == null) return;
+            
+            Ray ray = Camera.main.ScreenPointToRay(data.lookDirection);
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
+            {
+                Vector3 lookDir = hit.point - transform.position;
+                transform.rotation = Quaternion.LookRotation(lookDir * Runner.DeltaTime);
+            }
         }
     }
     
